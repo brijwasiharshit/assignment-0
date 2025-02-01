@@ -1,26 +1,64 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const productSlice = createSlice({
-  name: "myproducts",
+  name: "myproduct",
   initialState: {
-    items: [],
-    addProductMenu: false,
+    products: [],
+    buttons: {
+      addProductBtn: false,
+      editProductBtn: false,
+    },
+    editId: null,
+    status: "idle", // Optional: For tracking loading state
   },
   reducers: {
-    setInitialItems: (state,action) => {
-        state.items = action.payload;
+    setInitialItems: (state, action) => {
+      state.products = action.payload;
     },
     addItem: (state, action) => {
-      state.items.push(action.payload);
+      state.products.push(action.payload);
     },
-    removeItem: (state, action) => {},
-    editItem: (state, action) => {},
-    invertAddProductMenu: (state, action) => {
-      state.addProductMenu = action.payload.addProductBtnState;
+    editItem: (state, action) => {
+      const updatedProduct = action.payload;
+      const index = state.products.findIndex((product) => product.id === updatedProduct.id);
+      if (index !== -1) {
+        state.products[index] = updatedProduct;
+      }
+    },
+    setEditId: (state, action) => {
+      state.editId = action.payload || null;
+    },
+    removeItem: (state, action) => {
+      const { id } = action.payload;
+      state.products = state.products.filter((item) => item.id !== id);
+    },
+    clearAll: (state) => {
+      state.products = [];
+    },
+    toggleAddProduct: (state) => {
+      state.buttons.addProductBtn = !state.buttons.addProductBtn;
+      if (state.buttons.addProductBtn) {
+        state.buttons.editProductBtn = false; // Ensure edit form is closed
+      }
+    },
+    toggleEditProduct: (state) => {
+      state.buttons.editProductBtn = !state.buttons.editProductBtn;
+      if (state.buttons.editProductBtn) {
+        state.buttons.addProductBtn = false; // Ensure add form is closed
+      }
     },
   },
 });
 
-export const { setInitialItems, addItem,removeItem,editItem,invertAddProductMenu } = productSlice.actions;
+export const {
+  addItem,
+  removeItem,
+  clearAll,
+  setInitialItems,
+  toggleAddProduct,
+  toggleEditProduct,
+  editItem,
+  setEditId,
+} = productSlice.actions;
 
 export default productSlice.reducer;

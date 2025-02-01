@@ -1,61 +1,59 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  editItem,
+  removeItem,
+  toggleEditProduct,
+  toggleAddProduct,
+  setEditId,
+} from "../assets/redux/productSlice";
 
 const ProductCard = ({ product }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedProduct, setEditedProduct] = useState({
-    ...product,
-    images: product.images || [""], // Ensure `images` is always an array
-  });
+  const dispatch = useDispatch();
+  const showAddForm = useSelector((store) => store.myproduct.buttons.addProductBtn);
+  const showEditForm = useSelector((store) => store.myproduct.buttons.editProductBtn);
 
-  // Handle change for editable fields
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    setEditedProduct((prevState) => ({
-      ...prevState,
-      [name]:
-        name === "price" || name === "discountPercentage"
-          ? value ? parseFloat(value) : ""
-          : value,
-    }));
+  const handleEdit = async () => {
+    console.log("edit button clicked!");
+    dispatch(toggleEditProduct());
+    dispatch(setEditId(product.id));
   };
 
-  // Handle Image Change Separately
-  const handleImageChange = (e) => {
-    setEditedProduct((prevState) => ({
-      ...prevState,
-      images: [e.target.value], // Ensure immutability
-    }));
-  };
-
-  // Handle save action
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log("Product saved:", editedProduct);
+  const handleDelete = () => {
+    console.log("delete button clicked!");
+    dispatch(removeItem(product));
   };
 
   return (
     <div className="relative mx-auto my-12 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md transform hover:scale-105 transition-transform duration-300 ease-in-out">
-      <a className="relative mx-3 mt-3 flex h-48 overflow-hidden rounded-xl" href="#">
-        <img className="object-cover" src={editedProduct.images[0]} alt="product image" />
+      <div className="relative mx-3 mt-3 flex h-48 overflow-hidden rounded-xl">
+        <img
+          className="object-cover"
+          src={product?.images?.[0] || "/path/to/local/fallback-image.jpg"} // Use a local fallback
+          alt={`Image of ${product?.title}`} // More descriptive alt text
+        />
         <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-xs font-medium text-white">
-          {editedProduct.discountPercentage}% OFF
+          {product.discountPercentage}% OFF
         </span>
-      </a>
+      </div>
       <div className="mt-3 px-3 pb-4">
-        <a href="#" className="mx-auto">
-          <h5 className="text-lg tracking-tight text-slate-900">{editedProduct.title}</h5>
-        </a>
+        <div className="mx-auto">
+          <h5 className="text-lg tracking-tight text-slate-900">
+            {product?.title}
+          </h5>
+        </div>
         <div className="mt-2 mb-4 flex items-center justify-between">
           <p>
-            <span className="text-xl font-bold text-slate-900">${editedProduct.price}</span>
+            <span className="text-xl font-bold text-slate-900">
+              ${product?.price}
+            </span>
           </p>
           <div className="flex items-center">
-            {Array.from({ length: Math.floor(editedProduct.rating) }).map((_, index) => (
+            {Array.from({ length: 5 }).map((_, index) => (
               <svg
                 key={index}
                 aria-hidden="true"
-                className="h-4 w-4 text-yellow-300"
+                className={`h-4 w-4 ${index < product.rating ? "text-yellow-300" : "text-gray-300"}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -64,80 +62,28 @@ const ProductCard = ({ product }) => {
               </svg>
             ))}
             <span className="mr-2 ml-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
-              {editedProduct.rating}
+              {product?.rating}
             </span>
           </div>
         </div>
-        {isEditing ? (
-          <div className="mt-4">
-            <div className="mb-3">
-              <label className="block text-xs">Product Name</label>
-              <input
-                type="text"
-                name="title"
-                value={editedProduct.title}
-                onChange={handleInputChange}
-                className="w-full p-1 border rounded text-sm"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="block text-xs">Price</label>
-              <input
-                type="number"
-                name="price"
-                value={editedProduct.price}
-                onChange={handleInputChange}
-                className="w-full p-1 border rounded text-sm"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="block text-xs">Image URL</label>
-              <input
-                type="text"
-                name="image"
-                value={editedProduct.images[0]}
-                onChange={handleImageChange}
-                className="w-full p-1 border rounded text-sm"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="block text-xs">Discount</label>
-              <input
-                type="number"
-                name="discountPercentage"
-                value={editedProduct.discountPercentage}
-                onChange={handleInputChange}
-                className="w-full p-1 border rounded text-sm"
-              />
-            </div>
-            <div className="flex justify-between gap-2">
-              <button
-                onClick={handleSave}
-                className="px-3 py-1.5 w-16 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-3 py-1.5 w-16 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex justify-between gap-2">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-3 py-1.5 w-16 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-            >
-              Edit
-            </button>
-            <button className="px-3 py-1.5 w-16 bg-red-400 text-white rounded-md hover:bg-red-600 transition">
-              Delete
-            </button>
-          </div>
-        )}
+
+        {/* Buttons Section */}
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handleEdit}
+            aria-label="Edit Product"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            <span>Edit</span>
+          </button>
+          <button
+            onClick={handleDelete}
+            aria-label="Delete Product"
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   );

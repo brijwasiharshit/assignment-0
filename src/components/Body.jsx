@@ -1,50 +1,39 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-import { useDispatch, useSelector } from "react-redux";
 import AddNewProduct from "./AddNewProduct";
+import Loading from "./Loading";
+import { useDispatch, useSelector } from "react-redux";
 import { setInitialItems } from "../assets/redux/productSlice";
 
 const Body = () => {
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-  const [products, setProducts] = useState([]); 
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
 
-  // To set on or off the add product component
-  const addProductState = useSelector((store) => store.myproducts.addProductMenu);
-  const productsFromStore = useSelector((store) => store.myproducts.items); // Get products from the Redux store
+  const products = useSelector((store) => store.myproduct.products); // ✅ Correct use of useSelector
 
   const fetchData = async () => {
     try {
       const response = await fetch("https://dummyjson.com/products");
       const data = await response.json();
-      dispatch(setInitialItems(data.products)); // Dispatch products to the store
+      dispatch(setInitialItems(data.products)); // ✅ Dispatch only, no need to setProduct
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
-    } finally {
-      setIsLoading(false); // Set loading state to false once data is fetched
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, [dispatch]);
-
-  useEffect(() => {
-    // Sync local state with Redux state when it changes
-    setProducts(productsFromStore);
-  }, [productsFromStore]);
-
-  if (isLoading) {
-    return <div>Loading...</div>; // Add loading UI
-  }
+  }, []);
 
   return (
     <div className="container mx-auto px-4">
-      {/* Conditionally render Add New Product form */}
-      {addProductState ? (
-        <AddNewProduct />
+      {isLoading ? (
+        <Loading />
       ) : (
         <>
+          <AddNewProduct />
           <h2 className="text-3xl font-semibold text-center my-6 text-gray-700">
             Products List
           </h2>
