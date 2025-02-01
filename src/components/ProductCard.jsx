@@ -29,8 +29,8 @@ const ProductCard = ({ product }) => {
       <div className="relative mx-3 mt-3 flex h-48 overflow-hidden rounded-xl">
         <img
           className="object-cover"
-          src={product?.images?.[0] || "/path/to/local/fallback-image.jpg"} // Use a local fallback
-          alt={`Image of ${product?.title}`} // More descriptive alt text
+          src={product?.images?.[0] || "/path/to/local/fallback-image.jpg"}
+          alt={`Image of ${product?.title}`} 
         />
         <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-xs font-medium text-white">
           {product.discountPercentage}% OFF

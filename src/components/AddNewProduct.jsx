@@ -23,12 +23,12 @@ const AddNewProduct = () => {
       if (productToEdit) {
         name.current.value = productToEdit.title;
         price.current.value = productToEdit.price;
-        image.current.value = productToEdit.image?.[0] || ""; // Add fallback
+        image.current.value = productToEdit.image?.[0] || ""; 
         rating.current.value = productToEdit.rating;
         discount.current.value = productToEdit.discountPercentage;
       }
     }
-  }, [showEditForm, editId]); // Removed `products` from dependencies
+  }, [showEditForm, editId]); 
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,12 +44,11 @@ const AddNewProduct = () => {
 
     if (showEditForm) {
       dispatch(editItem(newProduct));
-      dispatch(setEditId(null)); // Reset edit mode after updating
+      dispatch(setEditId(null)); 
     } else {
       dispatch(addItem(newProduct));
     }
 
-    // Clear form fields if form is closed
     if (!formOpen) {
       name.current.value = "";
       price.current.value = "";

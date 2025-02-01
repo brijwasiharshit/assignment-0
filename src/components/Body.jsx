@@ -9,13 +9,13 @@ const Body = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
 
-  const products = useSelector((store) => store.myproduct.products); // ✅ Correct use of useSelector
+  const products = useSelector((store) => store.myproduct.products); 
 
   const fetchData = async () => {
     try {
       const response = await fetch("https://dummyjson.com/products");
       const data = await response.json();
-      dispatch(setInitialItems(data.products)); // ✅ Dispatch only, no need to setProduct
+      dispatch(setInitialItems(data.products));
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
