@@ -9,7 +9,7 @@ const Body = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
 
-  const products = useSelector((store) => store.myproduct.products); 
+  const products = useSelector((store) => store.myproduct.products);
 
   const fetchData = async () => {
     try {
@@ -28,15 +28,19 @@ const Body = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 py-8 bg-gradient-to-r from-blue-500 to-green-500">
       {isLoading ? (
-        <Loading />
+        <div className="flex justify-center items-center h-screen">
+          <Loading />
+        </div>
       ) : (
         <>
-          <AddNewProduct />
-          <h2 className="text-3xl font-semibold text-center my-6 text-gray-700">
-            Products List
-          </h2>
+          {/* Add New Product Section */}
+          <div className="mb-8">
+            <AddNewProduct />
+          </div>
+
+          {/* Product Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product) => (
               <ProductCard product={product} key={product.id} />

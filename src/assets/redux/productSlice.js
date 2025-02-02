@@ -9,7 +9,8 @@ const productSlice = createSlice({
       editProductBtn: false,
     },
     editId: null,
-    status: "idle", // Optional: For tracking loading state
+   
+    
   },
   reducers: {
     setInitialItems: (state, action) => {
@@ -47,6 +48,7 @@ const productSlice = createSlice({
         state.buttons.addProductBtn = false; // Ensure add form is closed
       }
     },
+   
   },
 });
 
@@ -59,6 +61,7 @@ export const {
   toggleEditProduct,
   editItem,
   setEditId,
+ 
 } = productSlice.actions;
 
 export default productSlice.reducer;
